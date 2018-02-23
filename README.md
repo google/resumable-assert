@@ -3,6 +3,8 @@ License](https://img.shields.io/github/license/google/resumable-assert.svg)](LIC
 
 # Resumable Assert
 
+![](https://gist.githubusercontent.com/shoumikhin/56ca2bf71e6b469d71488a50eb9f293b/raw/cd35d010d91c15c8f884091ab26c46e79f137463/demo.gif)
+
 ## Assert replacement to continue execution in debugger
 
 In any large app, it's entirely possible some assert is failing in code you
