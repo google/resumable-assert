@@ -1,0 +1,4 @@
+module ResumableAssert {
+    umbrella header "ResumableAssert.h"
+    export *
+}
