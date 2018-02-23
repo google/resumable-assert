@@ -18,7 +18,7 @@ Pod::Spec.new do |s|
 
   s.prefix_header_file = false
   s.public_header_files = "Sources/#{s.name}/include/**/*.h"
-  s.source_files = "Sources/#{s.name}/**/*.{h,m,swift}"
+  s.source_files = "Sources/#{s.name}/**/*.{h,m}"
   s.xcconfig = {
     'HEADER_SEARCH_PATHS' => "\"${PODS_TARGET_SRCROOT}/Sources/#{s.name}/include\""
   }
