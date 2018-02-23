@@ -21,13 +21,13 @@
 
 int gResumableAssertsAreAllDisabled;
 
-void resumableAssertDebugTrap() {
-#ifdef PRIVATE_RESUMABLE_ASSERT_DEBUG_TRAP
-  PRIVATE_RESUMABLE_ASSERT_DEBUG_TRAP();  // See the debugger console to resolve and continue.
-#endif  // PRIVATE_RESUMABLE_ASSERT_DEBUG_TRAP
+void ResumableAssertDebugTrap() {
+#ifdef RESUMABLE_ASSERT_DEBUG_TRAP
+  RESUMABLE_ASSERT_DEBUG_TRAP();  // See the debugger console to resolve and continue.
+#endif  // RESUMABLE_ASSERT_DEBUG_TRAP
 }
 
-int privateResumableAssertIsDebuggerAttached() {
+int ResumableAssertIsDebuggerAttached() {
   // See http://developer.apple.com/library/mac/#qa/qa1361/_index.html
   int mib[] = {CTL_KERN, KERN_PROC, KERN_PROC_PID, getpid()};
   struct kinfo_proc info;

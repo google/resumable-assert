@@ -86,11 +86,12 @@ redefine the `RESUMABLE_ASSERT_LOG()` macro in C like so:
 
 ## Swift
 
-For Swift and other languages we provide `resumableAssertDebugTrap()`
+For Swift and other languages we provide `ResumableAssertDebugTrap()`
 function that implements the core loop of resumable assert. You can then
 implement a custom assert function which would use it internally:
 
 ```swift
+// Import the module or use a bridging header and import ResumableAssert.h
 import ResumableAssert
 
 public func assert(
@@ -104,7 +105,7 @@ public func assert(
   if !condition() {
     print("Assertion failed: " + (message.isEmpty ? "" : "\(message): ") +
           "file \(file.description), function \(function.description), line \(line)")
-    resumableAssertDebugTrap()
+    ResumableAssertDebugTrap()
   }
 #endif
 }
