@@ -12,7 +12,7 @@ don't currently care about, and blocking the entire team from being able to run
 the app until the issue is fixed is not the best workflow. So we usually end up
 moving the execution marker past the assert line in IDE or debugger, or even
 comment the assert out, recompile and relaunch. With Resumable Assert, you can
-simply continue execution when assertion failed in debugger, or even disable
+simply continue execution when an assertion fails in debugger, or even disable
 asserts that you are not interested in, so that those never bother you again.
 
 _Disclaimer: be careful with that power though, since execution of potentially
