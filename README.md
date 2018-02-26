@@ -89,10 +89,18 @@ redefine the `RESUMABLE_ASSERT_LOG()` macro in C like so:
   } while (0)
 ```
 
+Similarly, you can define your own assert macro with a custom name:
+
+```objectivec
+#define ASSERT_WITH_FORMAT(condition, format, ...) \
+  RESUMABLE_ASSERT_WITH_FORMAT(condition, format, ##__VA_ARGS__)
+#define ASSERT(condition) ASSERT_WITH_FORMAT(condition, "")
+```
+
 ## Swift
 
 For Swift and other languages, we provide `ResumableAssertDebugTrap()` function
-that implements the core loop of resumable assert. You can then implement
+that implements the core logic of resumable assert. You can then implement
 a custom `assert()` function somewhere in a custom `Diagnostics` module which
 would use `ResumableAssertDebugTrap()` internally:
 
