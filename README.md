@@ -12,9 +12,8 @@ don't currently care about, and blocking the entire team from being able to run
 the app until the issue is fixed is not the best workflow. So we usually end up
 moving the execution marker past the assert line in IDE or debugger, or even
 comment the assert out, recompile and relaunch. With Resumable Assert, you can
-finally simply continue execution when assertion failed in debugger, or even
-disable asserts that you are not interested in, so that those never bother you
-again.
+simply continue execution when assertion failed in debugger, or even disable
+asserts that you are not interested in, so that those never bother you again.
 
 _Disclaimer: be careful with that power though, since execution of potentially
 broken code may lead to unrecoverable errors in future._
@@ -34,7 +33,7 @@ instead of the standard ones:
 etc.
 
 Once `RESUMABLE_ASSERT()` variant is hit in debug mode, you can ignore it and
-continue executiojn, or disable it permanently, or even disable all asserts
+continue execution, or disable it permanently, or even disable all asserts
 permanently with corresponding `lldb` commands when prompted.
 
 For example, the following assert somewhere in `ViewController.viewDidLoad`
