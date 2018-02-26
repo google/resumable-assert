@@ -153,9 +153,7 @@ To use `ResumableAssert` for Objective-C, add the following to your `Podfile`:
 pod 'ResumableAssert', '~> 1.0'
 ```
 
-Also, don't forget to `use_frameworks!` in your target. Then, run `pod install`.
-
-Then, import the umbrella header:
+Then, run `pod install` and import the umbrella header in generated project:
 
 ```objectivec
 #import <ResumableAssert/ResumableAssert.h>
