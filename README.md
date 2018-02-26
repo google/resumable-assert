@@ -61,7 +61,7 @@ e disable = 1  # disable this assert permanently
 e unleash = 1  # disable all asserts permanently
 ```
 
-Where you can just continue execution, and also disable the assert:
+Where you can just continue execution, or additionally disable the assert:
 
 ```sh
 (lldb) e disable = 1
