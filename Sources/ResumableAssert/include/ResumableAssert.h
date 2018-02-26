@@ -20,10 +20,10 @@
 #include <stdio.h>
 
 // Redefine RESUMABLE_ASSERT_LOG with a proper logging implementation if needed.
-#define RESUMABLE_ASSERT_LOG(__condition__, __format__, ...)           \
-  do {                                                                 \
-    printf("%s:%s:%u\n%s\n" __format__, __FILE__, __PRETTY_FUNCTION__, \
-           __LINE__, __condition__, ##__VA_ARGS__);                    \
+#define RESUMABLE_ASSERT_LOG(condition, format, ...)                           \
+  do {                                                                         \
+    printf("%s:%s:%u\nAssertion failed: %s\n" format,                          \
+           __FILE__, __PRETTY_FUNCTION__, __LINE__, condition, ##__VA_ARGS__); \
   } while (0)
 
 extern
@@ -36,9 +36,9 @@ void ResumableAssertDebugTrap(void);
 
 #ifndef DEBUG
 
-#define RESUMABLE_ASSERT_WITH_FORMAT(__condition__, __format__, ...) \
+#define RESUMABLE_ASSERT_WITH_FORMAT(condition, format, ...) \
   do {} while (0)
-#define RESUMABLE_ASSERT(__condition__) \
+#define RESUMABLE_ASSERT(condition) \
   do {} while (0)
 
 #else  // #ifndef DEBUG
@@ -81,34 +81,27 @@ int ResumableAssertIsDebuggerAttached(void);
   do {                                                                         \
     static volatile int gResumableAssertIsDisabled;                            \
     if (gResumableAssertIsDisabled || gResumableAssertsAreAllDisabled) break;  \
-    do {                                                                       \
-      if (!ResumableAssertIsDebuggerAttached()) __builtin_trap();              \
-      fprintf(stderr,                                                          \
-        "\nType one of the following lldb commands to resolve and continue:\n" \
-          "e ignore = 1   # ignore this assert this time\n"                    \
-          "e disable = 1  # disable this assert permanently\n"                 \
-          "e unleash = 1  # disable all asserts permanently\n");               \
-      volatile int ignore = 0, disable = 0, unleash = 0;                       \
-      RESUMABLE_ASSERT_DEBUG_BREAK();                                          \
-      gResumableAssertIsDisabled = disable;                                    \
-      gResumableAssertsAreAllDisabled = unleash;                               \
-      if (ignore ||                                                            \
-          gResumableAssertIsDisabled ||                                        \
-          gResumableAssertsAreAllDisabled)                                     \
-        break;                                                                 \
-    } while (1);                                                               \
+    if (!ResumableAssertIsDebuggerAttached()) __builtin_trap();                \
+    fprintf(stderr,                                                            \
+        "\nContinue execution or issue one of the following lldb commands:\n"  \
+        "e disable = 1  # disable this assert permanently\n"                   \
+        "e unleash = 1  # disable all asserts permanently\n\n");               \
+    volatile int disable = 0, unleash = 0;                                     \
+    RESUMABLE_ASSERT_DEBUG_BREAK();                                            \
+    gResumableAssertIsDisabled = disable;                                      \
+    gResumableAssertsAreAllDisabled = unleash;                                 \
   } while (0)
 
-#define RESUMABLE_ASSERT_WITH_FORMAT(__condition__, __format__, ...)           \
-  do {                                                                         \
-    if (__builtin_expect(!(__condition__), 0)) {                               \
-      RESUMABLE_ASSERT_LOG(#__condition__, __format__, ##__VA_ARGS__);         \
-      RESUMABLE_ASSERT_DEBUG_TRAP();                                           \
-    }                                                                          \
+#define RESUMABLE_ASSERT_WITH_FORMAT(condition, format, ...)   \
+  do {                                                         \
+    if (__builtin_expect(!(condition), 0)) {                   \
+      RESUMABLE_ASSERT_LOG(#condition, format, ##__VA_ARGS__); \
+      RESUMABLE_ASSERT_DEBUG_TRAP();                           \
+    }                                                          \
   } while (0)
 
-#define RESUMABLE_ASSERT(__condition__) \
-  RESUMABLE_ASSERT_WITH_FORMAT(__condition__, "")
+#define RESUMABLE_ASSERT(condition) \
+  RESUMABLE_ASSERT_WITH_FORMAT(condition, "")
 
 #endif  // #ifndef DEBUG
 

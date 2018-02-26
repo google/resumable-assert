@@ -23,7 +23,7 @@ int gResumableAssertsAreAllDisabled;
 
 void ResumableAssertDebugTrap() {
 #ifdef RESUMABLE_ASSERT_DEBUG_TRAP
-  RESUMABLE_ASSERT_DEBUG_TRAP();  // See the debugger console to resolve and continue.
+  RESUMABLE_ASSERT_DEBUG_TRAP();  // See the debugger console and continue.
 #endif  // RESUMABLE_ASSERT_DEBUG_TRAP
 }
 

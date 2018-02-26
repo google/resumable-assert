@@ -7,12 +7,14 @@ License](https://img.shields.io/github/license/google/resumable-assert.svg)](LIC
 
 ## Assert replacement to continue execution in debugger
 
-In any large app, it's entirely possible some assert is failing in code you
+In any large app, it sometimes happens that some asserts are failing in code you
 don't currently care about, and blocking the entire team from being able to run
 the app until the issue is fixed is not the best workflow. So we usually end up
 moving the execution marker past the assert line in IDE or debugger, or even
-comment the assert out, recompile and relaunch. With `ResumableAssert`, you can
-finally ignore or disable asserts that you are not interested in.
+comment the assert out, recompile and relaunch. With Resumable Assert, you can
+finally simply continue execution when assertion failed in debugger, or even
+disable asserts that you are not interested in, so that those never bother you
+again.
 
 _Disclaimer: be careful with that power though, since execution of potentially
 broken code may lead to unrecoverable errors in future._
@@ -31,34 +33,38 @@ instead of the standard ones:
 [`NSAssert()`](https://developer.apple.com/documentation/foundation/nsassert),
 etc.
 
-Once `RESUMABLE_ASSERT()` variant is hit in debug mode, you can ignore or
-disable it, or even disable all asserts permanently with corresponding `lldb`
-commands when prompted.
+Once `RESUMABLE_ASSERT()` variant is hit in debug mode, you can ignore it and
+continue executiojn, or disable it permanently, or even disable all asserts
+permanently with corresponding `lldb` commands when prompted.
 
-For example, the code:
+For example, the following assert somewhere in `ViewController.viewDidLoad`
+method:
 
 ```c
 RESUMABLE_ASSERT(2 + 2 == 5);
-// Or:
-RESUMABLE_ASSERT_WITH_FORMAT(2 + 2 == 5, "Calculation failure");
+```
+
+Or:
+
+```c
+RESUMABLE_ASSERT_WITH_FORMAT(2 + 2 == 5, "Calculation error");
 ```
 
 Leads to the following debugger console output:
 
 ```sh
 ViewController.m:-[ViewController viewDidLoad]:42
-2 + 2 == 5
-Calculation failure
-Type the following lldb commands to resolve and continue:
-e ignore = 1   # ignore this assert this time
+Assertion failed: 2 + 2 == 5
+Calculation error
+Continue execution or issue one of the following lldb commands:
 e disable = 1  # disable this assert permanently
 e unleash = 1  # disable all asserts permanently
 ```
 
-Where you can choose an option and continue:
+Where you can just continue execution, and also disable the assert:
 
 ```sh
-(lldb) e ignore = 1
+(lldb) e disable = 1
 (volatile int) $1 = 1
 (lldb) c
 Process 11193 resuming
@@ -66,7 +72,7 @@ Process 11193 resuming
 
 ## Custom logging
 
-`RESUMABLE_ASSERT()` macro in C use `stdout` to print the failure message by
+`RESUMABLE_ASSERT()` macro in C uses `stdout` to print the failure message by
 default. To change this behavior and use something else for logging,
 (e.g. [`NSLog()`](https://developer.apple.com/documentation/foundation/1395275-nslog))
 redefine the `RESUMABLE_ASSERT_LOG()` macro in C like so:
@@ -77,22 +83,22 @@ redefine the `RESUMABLE_ASSERT_LOG()` macro in C like so:
 #include "ResumableAssert.h"
 
 #undef RESUMABLE_ASSERT_LOG
-#define RESUMABLE_ASSERT_LOG(__condition__, __format__, ...)            \
-  do {                                                                  \
-    NSLog(@"%s:%u\n%s\n" __format__,                                    \
-          __PRETTY_FUNCTION__, __LINE__, __condition__, ##__VA_ARGS__); \
+#define RESUMABLE_ASSERT_LOG(condition, format, ...)                 \
+  do {                                                               \
+    NSLog(@"%s:%u\nAssertion failed: %s\n" format,                   \
+          __PRETTY_FUNCTION__, __LINE__, condition, ##__VA_ARGS__);  \
   } while (0)
 ```
 
 ## Swift
 
-For Swift and other languages we provide `ResumableAssertDebugTrap()`
-function that implements the core loop of resumable assert. You can then
-implement a custom assert function which would use it internally:
+For Swift and other languages, we provide `ResumableAssertDebugTrap()` function
+that implements the core loop of resumable assert. You can then implement
+a custom `assert()` function somewhere in a custom `Diagnostics` module which
+would use `ResumableAssertDebugTrap()` internally:
 
 ```swift
-// Import the module or use a bridging header and import ResumableAssert.h
-import ResumableAssert
+import ResumableAssert // Import the module or use a bridging header and import ResumableAssert.h.
 
 public func assert(
   _ condition: @autoclosure () -> Bool,
@@ -103,10 +109,60 @@ public func assert(
 ) {
 #ifdef DEBUG
   if !condition() {
-    print("Assertion failed: " + (message.isEmpty ? "" : "\(message): ") +
-          "file \(file.description), function \(function.description), line \(line)")
+    NSLog("Assertion failed:" + " \(message()):" +
+          " file \(file.description), function \(function.description), line \(line)")
     ResumableAssertDebugTrap()
   }
 #endif
 }
+```
+
+Then, you can use the new function as:
+
+```swift
+Diagnostics.assert(2 + 2 == 5, "Calculation error")
+```
+
+## Setup
+
+### Bazel
+
+In your `BUILD` file, add `ResumableAssert` deps to corresponding targets:
+
+```python
+objc_library(
+  # ...
+  deps = [
+    "//path/to/ResumableAssert",
+  ],
+  # ...
+)
+```
+
+Include or import the header:
+
+```objectivec
+#import "path/to/ResumableAssert/ResumableAssert.h"
+```
+
+### CocoaPods
+
+To use `ResumableAssert` for Objective-C, add the following to your `Podfile`:
+
+```ruby
+pod 'ResumableAssert', '~> 1.0'
+```
+
+Also, don't forget to `use_frameworks!` in your target. Then, run `pod install`.
+
+Then, import the umbrella header:
+
+```objectivec
+#import <ResumableAssert/ResumableAssert.h>
+```
+
+Or, the module:
+
+```objectivec
+@import ResumableAssert;
 ```
