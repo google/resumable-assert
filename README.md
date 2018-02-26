@@ -3,7 +3,7 @@ License](https://img.shields.io/github/license/google/resumable-assert.svg)](LIC
 
 # Resumable Assert
 
-![](https://gist.githubusercontent.com/shoumikhin/56ca2bf71e6b469d71488a50eb9f293b/raw/cd35d010d91c15c8f884091ab26c46e79f137463/demo.gif)
+![](https://gist.githubusercontent.com/shoumikhin/56ca2bf71e6b469d71488a50eb9f293b/raw/ce1860cfc638fa42247d814863e9abbd680e0edb/demo.gif)
 
 ## Assert replacement to continue execution in debugger
 
