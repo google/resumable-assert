@@ -27,7 +27,7 @@ void ResumableAssertDebugTrap() {
 #endif  // RESUMABLE_ASSERT_DEBUG_TRAP
 }
 
-int ResumableAssertIsDebuggerAttached() {
+int ResumableAssertIsDebuggerAttached(void) {
   // See http://developer.apple.com/library/mac/#qa/qa1361/_index.html
   int mib[] = {CTL_KERN, KERN_PROC, KERN_PROC_PID, getpid()};
   struct kinfo_proc info;
